@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Dashboard Guru - HOTS Informatika XII</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ============ LOGIN GURU ============ -->
+<main id="g-login" class="screen active">
+  <div class="wrap" style="max-width:420px">
+    <div class="card">
+      <div class="brand-row">
+        <div class="logo">G</div>
+        <div><h1>Dashboard Guru</h1><div class="muted small">HOTS Informatika Kelas XII</div></div>
+      </div>
+      <form id="g-form" autocomplete="off">
+        <label for="g-pass">Password guru</label>
+        <input id="g-pass" type="password" placeholder="Password" required>
+        <button class="btn block" type="submit">Masuk</button>
+        <div id="g-err" class="error" role="alert"></div>
+      </form>
+    </div>
+  </div>
+</main>
+
+<!-- ============ DASHBOARD ============ -->
+<main id="g-app" class="screen">
+  <div class="wrap wide">
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap">
+      <div class="brand-row" style="margin:0">
+        <div class="logo">G</div>
+        <div><h1 id="g-judul" style="margin:0">Dashboard Guru</h1><div class="muted small" id="g-sub"></div></div>
+      </div>
+      <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap">
+        <span id="g-state" class="badge info"></span>
+        <label style="margin:0; font-weight:400; font-size:.85rem"><input id="g-auto" type="checkbox" checked> auto-refresh 30 dtk</label>
+        <button id="g-refresh" class="btn ghost sm" type="button">Muat ulang</button>
+        <button id="g-keluar" class="btn ghost sm" type="button">Keluar</button>
+      </div>
+    </div>
+
+    <div class="tabs" id="g-tabs">
+      <button data-tab="ringkasan" class="on" type="button">Ringkasan</button>
+      <button data-tab="hasil" type="button">Hasil Siswa</button>
+      <button data-tab="atur" type="button">Pengaturan Waktu</button>
+    </div>
+
+    <!-- Ringkasan -->
+    <section id="tab-ringkasan">
+      <div class="stats" id="g-stats"></div>
+      <div class="grid2">
+        <div class="card"><h2>Rata-rata nilai per kelas</h2><div class="bars" id="g-kelas"></div></div>
+        <div class="card"><h2>Rata-rata skor per soal <span class="muted small">(maks 10)</span></h2><div class="bars" id="g-soal"></div></div>
+      </div>
+    </section>
+
+    <!-- Hasil -->
+    <section id="tab-hasil" class="hidden">
+      <div class="toolbar">
+        <select id="f-kelas"><option value="">Semua kelas</option></select>
+        <select id="f-status">
+          <option value="">Semua status</option>
+          <option value="Mengerjakan">Sedang mengerjakan</option>
+          <option value="Selesai">Selesai</option>
+        </select>
+        <input id="f-cari" type="text" placeholder="Cari nama...">
+        <span style="flex:1"></span>
+        <button id="g-hitung" class="btn ghost sm" type="button">Hitung ulang skor otomatis</button>
+        <button id="g-csv" class="btn sm" type="button">Unduh CSV</button>
+      </div>
+      <div class="tablewrap">
+        <table>
+          <thead><tr>
+            <th>Kelas</th><th>Absen</th><th>Nama</th><th>Tanggal</th><th>Mulai</th><th>Selesai</th>
+            <th>Status</th><th>Pelanggaran</th><th>Nilai</th><th>Penilai</th><th></th>
+          </tr></thead>
+          <tbody id="g-rows"></tbody>
+        </table>
+      </div>
+      <p class="small muted" style="margin-top:10px">
+        Nilai awal adalah <b>saran otomatis</b> berdasarkan kata kunci. Buka <b>Detail</b> untuk membaca jawaban dan memberi skor akhir (0&ndash;10 per soal).
+      </p>
+    </section>
+
+    <!-- Pengaturan -->
+    <section id="tab-atur" class="hidden">
+      <div class="card" style="max-width:640px">
+        <h2>Jadwal pengerjaan</h2>
+        <p class="muted small">Siswa hanya bisa login di antara waktu mulai dan selesai (WIB).</p>
+        <label for="s-judul">Judul penilaian</label>
+        <input id="s-judul" type="text" maxlength="80">
+        <div class="row">
+          <div><label for="s-mulai">Waktu mulai</label><input id="s-mulai" type="datetime-local"></div>
+          <div><label for="s-selesai">Waktu selesai</label><input id="s-selesai" type="datetime-local"></div>
+        </div>
+        <label for="s-durasi">Durasi per siswa (menit, 0 = ikut waktu selesai)</label>
+        <input id="s-durasi" type="number" min="0" max="600">
+        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:12px">
+          <button id="s-sekarang" class="btn ghost sm" type="button">Mulai sekarang (+ sesuai durasi)</button>
+          <button id="s-tutup" class="btn danger sm" type="button">Tutup sekarang</button>
+        </div>
+        <label for="s-pass" style="margin-top:22px">Ganti password guru (kosongkan bila tidak diganti)</label>
+        <input id="s-pass" type="password" placeholder="Minimal 6 karakter" autocomplete="new-password">
+        <button id="s-simpan" class="btn block" type="button">Simpan pengaturan</button>
+        <div id="s-msg" class="small" style="margin-top:10px"></div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<!-- ============ MODAL DETAIL ============ -->
+<div id="g-modal" class="overlay hidden" style="align-items:start; overflow-y:auto">
+  <div class="modal-card" style="margin:20px auto">
+    <div style="display:flex; justify-content:space-between; gap:10px; align-items:start">
+      <div><h2 id="m-nama" style="margin:0"></h2><div class="muted small" id="m-info"></div></div>
+      <button id="m-tutup" class="btn ghost sm" type="button">Tutup</button>
+    </div>
+    <div id="m-log" class="banner warn hidden"></div>
+    <div id="m-body"></div>
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; margin-top:12px; flex-wrap:wrap">
+      <b>Total nilai: <span id="m-total">0</span> / 100</b>
+      <span id="m-msg" class="small"></span>
+      <button id="m-simpan" class="btn" type="button">Simpan skor</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+
+<script src="config.js"></script>
+<script src="guru.js"></script>
+</body>
+</html>

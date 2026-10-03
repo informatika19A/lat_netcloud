@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Penilaian HOTS Informatika XII</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ============ LOGIN ============ -->
+<main id="screen-login" class="screen active">
+  <div class="wrap">
+    <div class="card">
+      <div class="brand-row">
+        <div class="logo">IF</div>
+        <div>
+          <h1 id="judul">Penilaian HOTS Informatika</h1>
+          <div class="muted small">Kelas XII &middot; Jaringan &amp; Cloud Computing</div>
+        </div>
+      </div>
+
+      <div id="status-banner" class="banner info">Memeriksa jadwal pengerjaan...</div>
+
+      <form id="form-login" autocomplete="off" novalidate>
+        <label for="nama">Nama Lengkap</label>
+        <input id="nama" type="text" maxlength="60" placeholder="Ketik nama lengkap" required>
+
+        <div class="row">
+          <div>
+            <label for="absen">No. Absen</label>
+            <input id="absen" type="number" min="1" max="99" inputmode="numeric" placeholder="mis. 12" required>
+          </div>
+          <div>
+            <label for="kelas">Kelas</label>
+            <select id="kelas" required>
+              <option value="">Pilih kelas</option>
+              <option>XII2</option>
+              <option>XII3</option>
+              <option>XII4</option>
+              <option>XII5</option>
+            </select>
+          </div>
+        </div>
+
+        <label for="tanggal">Tanggal Pengerjaan</label>
+        <input id="tanggal" type="date" readonly>
+
+        <ul class="rules">
+          <li>Setelah masuk, layar otomatis menjadi <b>layar penuh</b>.</li>
+          <li>Dilarang berpindah tab/aplikasi, membuka split screen, atau keluar dari layar penuh.</li>
+          <li>Copy &amp; paste dinonaktifkan: <b>ketik sendiri</b> semua jawabanmu.</li>
+          <li>Pelanggaran dicatat. Setelah 3 kali, jawaban otomatis dikirim dan sesi dikunci.</li>
+          <li>Gunakan laptop/PC (Chrome atau Edge) atau Chrome Android. iPhone tidak mendukung layar penuh.</li>
+        </ul>
+
+        <button id="btn-masuk" class="btn block" type="submit" disabled>Masuk &amp; Mulai</button>
+        <div id="login-error" class="error" role="alert"></div>
+      </form>
+    </div>
+  </div>
+</main>
+
+<!-- ============ UJIAN ============ -->
+<main id="screen-exam" class="screen">
+  <div class="wrap wide">
+    <div class="topbar">
+      <div class="who"><span id="who-nama"></span> <span id="who-info"></span></div>
+      <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap">
+        <span class="pill" id="pill-pel">Pelanggaran: 0/3</span>
+        <span class="pill" id="pill-timer">Sisa waktu <b id="timer">--:--</b></span>
+      </div>
+    </div>
+
+    <div class="exam-grid">
+      <aside class="card">
+        <h3>Navigasi soal</h3>
+        <div id="nav" class="nav"></div>
+        <p class="small muted" style="margin-top:12px">Hijau = sudah dijawab. Jawaban tersimpan otomatis.</p>
+        <button id="btn-kirim" class="btn block" type="button">Kirim Jawaban</button>
+      </aside>
+
+      <section class="card" id="q-card">
+        <div><span class="tag" id="q-bagian"></span><span class="tag" id="q-level"></span></div>
+        <h2 id="q-judul" style="margin-top:10px"></h2>
+        <div id="q-kasus" class="kasus"></div>
+        <div id="q-tanya" class="pertanyaan"></div>
+        <label for="jawab">Jawabanmu (jawab semua bagian a, b, c dengan kalimatmu sendiri)</label>
+        <textarea id="jawab" class="jawab" autocomplete="off" autocapitalize="sentences" spellcheck="false"
+                  data-gramm="false" placeholder="Ketik jawabanmu di sini..."></textarea>
+        <div class="small muted" id="q-hitung" style="text-align:right"></div>
+        <div class="q-actions">
+          <button id="btn-prev" class="btn ghost" type="button">&larr; Sebelumnya</button>
+          <button id="btn-next" class="btn" type="button">Berikutnya &rarr;</button>
+        </div>
+      </section>
+    </div>
+  </div>
+</main>
+
+<!-- ============ SELESAI ============ -->
+<main id="screen-done" class="screen">
+  <div class="wrap">
+    <div class="card" style="text-align:center">
+      <div class="logo" style="margin:0 auto 12px; background:var(--ok-soft); color:var(--ok)">&#10003;</div>
+      <h1>Jawaban terkirim</h1>
+      <p id="done-info" class="muted"></p>
+      <p class="small muted">Terima kasih. Nilai akan diumumkan oleh gurumu. Kamu boleh menutup halaman ini.</p>
+    </div>
+  </div>
+</main>
+
+<!-- ============ OVERLAY PELANGGARAN ============ -->
+<div id="ov-lock" class="overlay lock hidden">
+  <div class="box" style="text-align:center">
+    <div class="pill bad" style="margin-bottom:12px">Pelanggaran terdeteksi</div>
+    <h2 id="lock-judul">Kembali ke layar penuh</h2>
+    <p id="lock-pesan" class="muted"></p>
+    <p class="small muted">Soal disembunyikan sampai kamu kembali ke layar penuh. Waktu tetap berjalan.</p>
+    <button id="btn-resume" class="btn block" type="button">Kembali ke Layar Penuh</button>
+  </div>
+</div>
+
+<!-- ============ MODAL KONFIRMASI KIRIM ============ -->
+<div id="ov-konfirmasi" class="overlay hidden">
+  <div class="box">
+    <h2>Kirim jawaban sekarang?</h2>
+    <p id="konfirmasi-pesan" class="muted"></p>
+    <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:16px">
+      <button id="btn-batal" class="btn ghost" type="button">Periksa lagi</button>
+      <button id="btn-yakin" class="btn" type="button">Ya, kirim</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MODAL STATUS PENGIRIMAN ============ -->
+<div id="ov-kirim" class="overlay hidden">
+  <div class="box" style="text-align:center">
+    <h2 id="kirim-judul">Mengirim jawaban...</h2>
+    <p id="kirim-pesan" class="muted">Jangan tutup halaman ini.</p>
+    <button id="btn-coba" class="btn block hidden" type="button">Coba kirim lagi</button>
+  </div>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
